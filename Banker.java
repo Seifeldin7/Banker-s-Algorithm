@@ -117,6 +117,7 @@ public class Banker {
             if (accepted) {
                 for (int j = 0; j < R; j++) {
                     available[j].setValue(available[j].getValue() + alloc[i][j]);
+                    alloc[i][j]=0;
                 }
                 this.flag[i] = true;
                 used_processes.add(i);
