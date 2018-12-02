@@ -98,7 +98,15 @@ public class Banker {
             System.out.println("Request Denied!");
         }
     }
-
+    private void release(int p) {
+        for (int i = 0; i < R; i++) {
+                available[i].setValue(available[i].getValue() +alloc[p][i]);
+            }
+        for (int j = 0; j < R; j++) {
+                alloc[p][j] =0;
+            }
+        System.out.println("Process"+ p +"has finished!");
+    }
     private boolean isSafe(int current_request, int p_no) {
         boolean Safe = true;
         int[][] tempAlloc = new int[P][R];
@@ -167,16 +175,21 @@ public class Banker {
         P = sc.nextInt();
         Banker banker = new Banker(R, P);
         banker.input();
-
+        int counter ;
         for (int i = 0; i < banker.no_of_requests; i++) {
             int p = banker.rand.nextInt(P);
             banker.Need = banker.calcNeed(banker.alloc);
             System.out.print("Process" + p + "requested:");
+            counter =banker.rand.nextInt(11);
+            if(counter!=p && (counter>0 && counter<=P)){
+                banker.release(counter);
+            }
             for (int k = 0; k < banker.request[i].length; k++) {
                 System.out.print(banker.request[i][k] + " ");
             }
             System.out.println();
             banker.request(i, p);
+            banker.Need = banker.calcNeed(banker.alloc);
             for (int k = 0; k < banker.P; k++) {
                 for (int j = 0; j < banker.R; j++) {
                     System.out.print(banker.Need[k][j] + " ");
