@@ -46,7 +46,7 @@ public class Banker {
         alloc = new int[P][R];
         max = new int[P][R];
         available = new resource[R];
-        flag = new boolean[P];
+
         request = new int[this.no_of_requests][R];
 
         Scanner sc = new Scanner(System.in);
@@ -69,7 +69,7 @@ public class Banker {
 
         for (int i = 0; i < this.no_of_requests; i++) {
             for (int j = 0; j < R; j++) {
-                request[i][j] = rand.nextInt(31);
+                request[i][j] = rand.nextInt(11);
             }
         }
     }
@@ -85,12 +85,10 @@ public class Banker {
 
     }
 
-    private void request(int current_request) {
-        if (isSafe(current_request)) {
-            for (int i = 0; i < P; i++) {
-                for (int j = 0; j < R; j++) {
-                    alloc[i][j] += request[current_request][j];
-                }
+    private void request(int current_request, int p_no) {
+        if (isSafe(current_request, p_no)) {
+            for (int j = 0; j < R; j++) {
+                alloc[p_no][j] += request[current_request][j];
             }
             for (int i = 0; i < R; i++) {
                 available[i].setValue(available[i].getValue() - request[current_request][i]);
@@ -101,51 +99,51 @@ public class Banker {
         }
     }
 
-    private boolean isSafe(int current_request) {
-        int temp2 = R;
+    private boolean isSafe(int current_request, int p_no) {
         boolean Safe = true;
         int[][] tempAlloc = new int[P][R];
-        resource[] tempAvailable = new resource[R];
+        int[] tempAvailable = new int[R];
+        flag = new boolean[P];
+        for (int i = 0; i < flag.length; i++) {
+            flag[i] = false;
+        }
         for (int i = 0; i < P; i++) {
             for (int j = 0; j < R; j++) {
                 tempAlloc[i][j] = alloc[i][j];
             }
         }
-        int tempNeed[][] = this.calcNeed(tempAlloc);
+
         for (int i = 0; i < R; i++) {
-            if (request[current_request][i] > tempNeed[current_request % P][i]) {
-                return false;
-            }
+            tempAvailable[i] = available[i].getValue();
         }
-        for (int i = 0; i < R; i++) {
-            tempAvailable[i] = available[i];
-        }
-        List<Integer> used_processes = new ArrayList<Integer>();
+        List<Integer> used_processes = new ArrayList<>();
         for (int i = 0; i < P; i++) {
             for (int j = 0; j < R; j++) {
                 tempAlloc[i][j] += request[current_request][j];
-                tempAvailable[j].setValue(tempAvailable[j].getValue() - request[current_request][j]);
+                tempAvailable[j] = tempAvailable[j] - request[current_request][j];
 
             }
         }
-        tempNeed = this.calcNeed(tempAlloc);
-
+        int tempNeed[][] = this.calcNeed(tempAlloc);
+        for (int i = 0; i < R; i++) {
+            if (request[current_request][i] > tempNeed[p_no][i]) {
+                return false;
+            }
+        }
         for (int i = 0; i < P; i++) {
             if (used_processes.contains(i)) {
                 continue;
             }
             boolean accepted = true;
-            int[] temp = new int[R];
             for (int j = 0; j < R; j++) {
-                temp[j] = tempAvailable[j].getValue() + tempAlloc[i][j];
-                if (temp[j] < max[i][j]) {
+                if (tempNeed[i][j] > available[j].getValue()) {
                     accepted = false;
                     break;
                 }
             }
             if (accepted) {
                 for (int j = 0; j < R; j++) {
-                    tempAvailable[j].setValue(tempAvailable[j].getValue() + tempAlloc[i][j]);
+                    tempAvailable[j] = tempAvailable[j] + tempAlloc[i][j];
                 }
                 this.flag[i] = true;
                 used_processes.add(i);
@@ -171,7 +169,14 @@ public class Banker {
         banker.input();
 
         for (int i = 0; i < banker.no_of_requests; i++) {
+            int p = banker.rand.nextInt(P);
             banker.Need = banker.calcNeed(banker.alloc);
+            System.out.print("Process" + p + "requested:");
+            for (int k = 0; k < banker.request[i].length; k++) {
+                System.out.print(banker.request[i][k] + " ");
+            }
+            System.out.println();
+            banker.request(i, p);
             for (int k = 0; k < banker.P; k++) {
                 for (int j = 0; j < banker.R; j++) {
                     System.out.print(banker.Need[k][j] + " ");
@@ -191,7 +196,6 @@ public class Banker {
                 System.out.println();
             }
 
-            banker.request(i);
         }
 
     }
