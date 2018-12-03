@@ -181,7 +181,7 @@ public class Banker {
             banker.Need = banker.calcNeed(banker.alloc);
             System.out.print("Process" + p + "requested:");
             counter =banker.rand.nextInt(11);
-            if(counter!=p && (counter>0 && counter<=P)){
+            if(counter!=p && (counter>=0 && counter< P)){
                 banker.release(counter);
             }
             for (int k = 0; k < banker.request[i].length; k++) {
