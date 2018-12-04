@@ -99,6 +99,12 @@ public class Banker {
         }
     }
     private void release(int p) {
+        for(int i=0;i<R;i++){
+            if(alloc[p][i]!=0)
+                break;
+            if(i==R-1)
+                return;
+        }
         for (int i = 0; i < R; i++) {
                 available[i].setValue(available[i].getValue() +alloc[p][i]);
             }
@@ -179,7 +185,7 @@ public class Banker {
         for (int i = 0; i < banker.no_of_requests; i++) {
             int p = banker.rand.nextInt(P);
             banker.Need = banker.calcNeed(banker.alloc);
-            System.out.print("Process" + p + "requested:");
+            System.out.print("Process " + p + " requested:");
             counter =banker.rand.nextInt(11);
             if(counter!=p && (counter>=0 && counter< P)){
                 banker.release(counter);
