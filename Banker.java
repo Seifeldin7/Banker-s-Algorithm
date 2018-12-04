@@ -111,7 +111,7 @@ public class Banker {
         for (int j = 0; j < R; j++) {
                 alloc[p][j] =0;
             }
-        System.out.println("Process"+ p +"has finished!");
+        System.out.println("Process "+ p +" has finished!");
     }
     private boolean isSafe(int current_request, int p_no) {
         boolean Safe = true;
@@ -211,6 +211,12 @@ public class Banker {
 
                 for (int j = 0; j < banker.R; j++) {
                     System.out.print(banker.alloc[k][j] + " ");
+                }
+                 if (k == 0) {
+                    System.out.print("Available ");
+                    for (int j = 0; j < banker.R; j++) {
+                        System.out.print(banker.available[j].getName()+":"+banker.available[j].getValue() + "  ");
+                    }
                 }
                 System.out.println();
             }
