@@ -36,6 +36,7 @@ public class Banker {
     boolean[] flag;
     private int no_of_requests = rand.nextInt(31);
     private int[][] request;
+    private boolean max_request =true;
 
     public Banker(int R, int P) {
         this.R = R;
@@ -86,7 +87,12 @@ public class Banker {
     }
 
     private void request(int current_request, int p_no) {
-        if (isSafe(current_request, p_no)) {
+        this.max_request =true;
+        boolean Safe =isSafe(current_request, p_no);
+        if(this.max_request == false){
+            System.out.println("Request Denied! Recources requested are greater than the Need.");
+        }
+        else if (Safe) {
             for (int j = 0; j < R; j++) {
                 alloc[p_no][j] += request[current_request][j];
             }
@@ -95,7 +101,7 @@ public class Banker {
             }
             System.out.println("Request Accepted!");
         } else {
-            System.out.println("Request Denied!");
+            System.out.println("Request Denied! System is unsafe");
         }
     }
     private void release(int p) {
@@ -141,7 +147,8 @@ public class Banker {
         int tempNeed[][] = this.calcNeed(tempAlloc);
         for (int i = 0; i < R; i++) {
             if (request[current_request][i] > tempNeed[p_no][i]) {
-                return false;
+               this.max_request =false;
+                return true;
             }
         }
         for (int i = 0; i < P; i++) {
