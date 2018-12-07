@@ -183,8 +183,10 @@ public class Banker {
 
     public static void main(String[] args) {
         int R, P;
+        System.out.println("enter no of resources");
         Scanner sc = new Scanner(System.in);
         R = sc.nextInt();
+        System.out.println("enter no of processes");
         P = sc.nextInt();
         Banker banker = new Banker(R, P);
         banker.input();
